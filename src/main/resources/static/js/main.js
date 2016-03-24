@@ -63,7 +63,7 @@ Streamer.drawLine = function(x1, y1, x2, y2)
 };
 
 Streamer.setConnected = function (connected) {
-//    document.getElementById('connect').disabled = connected;
+    document.getElementById('connect').disabled = connected;
     document.getElementById('disconnect').disabled = !connected;
 //    document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
 //    document.getElementById('response').innerHTML = '';

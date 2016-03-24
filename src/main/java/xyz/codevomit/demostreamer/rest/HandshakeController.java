@@ -42,7 +42,7 @@ public class HandshakeController
 //        long id = counter.incrementAndGet();
 //    }
 
-    @Scheduled(fixedDelay = 10L)
+    @Scheduled(fixedDelay = 100L)
     public void stream()
     {
         double streamSample = random.nextDouble();
