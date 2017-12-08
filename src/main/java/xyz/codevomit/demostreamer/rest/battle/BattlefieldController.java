@@ -28,4 +28,10 @@ public class BattlefieldController
         log.info("Received input message: {}", inputMessage);
         return "Output message for [" + inputMessage + "]";
     }
+    
+    @MessageMapping("/move")
+    @SendTo("/topic/battlefield")
+    public MoveCommand move(MoveCommand moveCommand){
+        return moveCommand;
+    }
 }
