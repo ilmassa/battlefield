@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>Battlefield</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
         <script src="//cdn.jsdelivr.net/sockjs/1.0.3/sockjs.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
         <script src="js/battlefield.js"></script>
@@ -19,9 +20,9 @@
         </noscript>
         <div>
             <div>
-                <input type="text" value="guest">
-                <button id="connect" onclick="Streamer.connect();">Connect</button>
-                <button id="disconnect" disabled="disabled" onclick="Streamer.disconnect();">Disconnect</button>
+                <input id="username" type="text" value="guest">
+                <button id="connect" >Connect</button>
+                <button id="disconnect" >Disconnect</button>
             </div>
             <div id="graphContainer">
                 <canvas id="canvas" width="800" height="500">
