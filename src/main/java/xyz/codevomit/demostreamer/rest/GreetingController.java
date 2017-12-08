@@ -1,13 +1,10 @@
 package xyz.codevomit.demostreamer.rest;
 
 import java.util.concurrent.atomic.AtomicLong;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import xyz.codevomit.demostreamer.Greeting;
-import xyz.codevomit.demostreamer.HelloMessage;
 
 /**
  *

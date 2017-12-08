@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="//cdn.jsdelivr.net/sockjs/1.0.3/sockjs.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
+        <script src="js/battlefield.js"></script>
+        <script type="text/javascript">
+        </script>
+    </head>
+    <body>
+        <noscript>
+            <h2 style="color: #ff0000">
+                Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
+                Javascript and reload this page!
+            </h2>
+        </noscript>
+        <div>
+            <div>
+                <input type="text" value="guest">
+                <button id="connect" onclick="Streamer.connect();">Connect</button>
+                <button id="disconnect" disabled="disabled" onclick="Streamer.disconnect();">Disconnect</button>
+            </div>
+            <div id="graphContainer">
+                <canvas id="canvas" width="800" height="500">
+
+                </canvas>
+            </div>
+        </div>
+    </body>
+</html>
