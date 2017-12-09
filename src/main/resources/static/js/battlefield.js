@@ -26,7 +26,7 @@
         
         username: null,
         
-        pawns: {},
+        pawns: [],
                 
         connect: function(){
             console.log("connecting to the WebSocket controller");
@@ -40,11 +40,7 @@
             stompClient.subscribe("/topic/battlefield", Battlefield.onMessageReceived);
             var username = $('#username').val();
             Battlefield.username = username;
-            var pawn = document.createElement("div");
-            pawn.id = username;
-            var randomColor = Battlefield.randomColor();
-            pawn.style = "background-color: " + randomColor + "; height: 20px; width: 20px; position: absolute;";
-            document.body.appendChild(pawn);
+            var pawn = Battlefield.appendPawnElement(username);
             Battlefield.sendProbeMessage("username: " + username);
         },
         
@@ -63,15 +59,21 @@
             var payload = JSON.parse(message.body);
             var element = $('#' + payload.username);
             if(element.length === 0){
-                var othePlayerPawn = document.createElement("div");
-                othePlayerPawn.id = payload.username;
-                var randomColor = Battlefield.randomColor();
-                othePlayerPawn.style = "background-color: " + randomColor + "; height: 20px; width: 20px; position: absolute;";
-                document.body.appendChild(othePlayerPawn);
-                element = $('#' + payload.username);
+                Battlefield.appendPawnElement(payload.username);
             }
             console.log("moving element => ", element);
             element.offset({top: payload.y, left: payload.x});
+        },
+        
+        appendPawnElement: function (username) {
+            var playerPawn = document.createElement("div");
+            playerPawn.id = username;
+            var randomColor = Battlefield.randomColor();
+            playerPawn.style = "background-color: " + randomColor + "; height: 20px; width: 20px; position: absolute;";
+            playerPawn.className = "pawn";
+            document.body.appendChild(playerPawn);
+            element = $('#' + username);
+            return element;
         },
         
         sendProbeMessage: function(text){
@@ -81,7 +83,7 @@
         disconnect: function () {
             if (!!stompClient) {
                 stompClient.disconnect();
-                $('#' + Battlefield.username).remove();
+                $('.pawn').remove();
                 stompClient = null;
             }
             console.log("Disconnected");
@@ -106,11 +108,13 @@
         });
         
         $(document).keypress(function(event){
-            var keyCode = event.keyCode;
+            var keyCode = event.originalEvent.charCode; //.keyCode;
+            console.log("keyCode = " + keyCode);
             // w => 119
             // a => 97
             // s => 115
             // d => 100
+            // <space> => 32
             var incrementX = 0;
             var incrementY = 0;
             var coeff = 2;
