@@ -7,9 +7,26 @@
         <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
         <script src="//cdn.jsdelivr.net/sockjs/1.0.3/sockjs.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
-        <script src="js/battlefield.js"></script>
-        <script type="text/javascript">
-        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/oimo/1.0.9/oimo.min.js"></script>
+        <script src="https://cdn.babylonjs.com/babylon.js"></script>
+        <script src="js/battlefield3d.js"></script>
+        <script src="js/battlefieldMain.js"></script>
+        <style>
+            html, body {
+                overflow: hidden;
+                width   : 100%;
+                height  : 100%;
+                margin  : 0;
+                padding : 0;
+            }
+
+            .battlefield {
+                width   : 100%;
+                height  : 100%;
+                touch-action: none;
+            }
+        </style>
     </head>
     <body>
         <noscript>
@@ -24,9 +41,8 @@
                 <button id="connect" >Connect</button>
                 <button id="disconnect" >Disconnect</button>
             </div>
-            <div id="diagnosticDIV"> <input id="position" type="text"> </div>
-            <div id="graphContainer" style="display: none;">
-                <canvas id="battlefieldCanvas" width="800" height="500">
+            <div id="graphContainer">
+                <canvas id="battlefieldCanvas" class="battlefield">
                     
                 </canvas>
             </div>
