@@ -13,8 +13,11 @@
     });
     
     function addGameObjects() {
-        battlefield.addCube(20, 20, 0);
-        battlefield.addRipple(4, 4);
+        // battlefield.addCube(20, 20, 0);
+        battlefield.addPawn("initialPawn", 0, 0);
+//        battlefield.addRipple(4, 4);
     }
+    
+    
     
 })();

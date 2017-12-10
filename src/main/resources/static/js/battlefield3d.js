@@ -5,6 +5,8 @@
     Battlefield = function(canvasId){
         this.canvasId = canvasId;
         this.ripples = [];
+        this.pawns = {};
+        this.playerPawn = {};
     };
     
     Battlefield.prototype.init = function () {
@@ -21,8 +23,8 @@
         });
         
         innerScene.onPointerDown = function(event, pickResult){
-            console.log("event: ", event);
-            console.log("pickedResult: ", pickResult);
+//            console.log("event: ", event);
+//            console.log("pickedResult: ", pickResult);
             if(pickResult.hit && event.button === 2){
                 self.addRipple(pickResult.pickedPoint.x, pickResult.pickedPoint.z);
             }
@@ -35,6 +37,10 @@
     Battlefield.prototype.gameLoop = function(){
         for(var i = 0; i < this.ripples.length; i++){
             this.ripples[i].update();
+        }
+        for (var pawnName in this.pawns){
+            var updatingPawn = this.pawns[pawnName];
+            updatingPawn.update();
         }
     };
     
@@ -51,13 +57,13 @@
         this.scene.enablePhysics(new B.Vector3(0, -9.81, 0), new BABYLON.CannonJSPlugin());
 //        this.scene.enablePhysics(new B.Vector3(0, -9.81, 0), new B.OimoJSPlugin());
         
-        // ---
+        // Sphere cannonball test 
         var sphere = B.MeshBuilder.CreateSphere('sphere', {segments: 16, diameter: 1}, this.scene);
-
         // move the sphere upward 1/2 of its height
         sphere.position.y = 4;
         sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass:  1 }, this.scene);;
-        sphere.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(.1, 20, 0));
+        sphere.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(.1, 15, 0));
+        // Sphere cannonball test -- end
 
         // create a built-in "ground" shape; 
         var ground = B.Mesh.CreateGround('ground1', 40, 40, 2, this.scene);
@@ -95,6 +101,12 @@
         if(found !== null){
             this.ripples.splice(found, 1);
         }
+    };
+        
+    Battlefield.prototype.addPawn = function(name, x, z){
+        var pawn = new Pawn(name, x, z, this.scene, this);
+        this.playerPawn = pawn;
+        this.pawns[name] = pawn;
     };
 
 })();
