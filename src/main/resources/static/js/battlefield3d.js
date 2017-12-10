@@ -27,6 +27,7 @@
 //            console.log("pickedResult: ", pickResult);
             if(pickResult.hit && event.button === 2){
                 self.addRipple(pickResult.pickedPoint.x, pickResult.pickedPoint.z);
+                self.playerPawn.moveTo(pickResult.pickedPoint);
             }
         };
         
@@ -49,7 +50,7 @@
         this.scene = new B.Scene(this.engine);
         this.scene.__debugId = "scene01";
         //this.camera = new B.FreeCamera('camera', new BABYLON.Vector3(2, 10, -20), this.scene);
-        this.camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 3, Math.PI / 3, 50, BABYLON.Vector3.Zero(), this.scene);
+        this.camera = new BABYLON.ArcRotateCamera("Camera", 0, Math.PI / 3, 50, BABYLON.Vector3.Zero(), this.scene);
         this.camera.setTarget(BABYLON.Vector3.Zero());
         this.camera.attachControl(this.canvas, false);
         var light = new B.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), this.scene);

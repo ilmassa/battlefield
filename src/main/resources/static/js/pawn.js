@@ -1,12 +1,15 @@
 var B = BABYLON;
 var PAWN_SIZE = 1;
 var PAWN_MASS = 10;
+var PAWN_MAX_VELOCITY_MAGNITUDE =1;
 (function(){
     
     Pawn = function(name, x, z, scene, listener){
         this.listener = listener;
         this.cubeMesh = {};
         this.cannonMesh = {};
+        this.targetPosition = false;
+        this.moving = false;
         this.init(name, x, z, scene);
     };
     
@@ -16,12 +19,39 @@ var PAWN_MASS = 10;
             {size: PAWN_SIZE}, scene);
         cube.position.y = PAWN_SIZE / 2;
         cube.physicsImpostor = new B.PhysicsImpostor(
-                cube, B.PhysicsImpostor.BoxImpostor, {mass: PAWN_MASS, friction: 1, restitution: 1}, this.scene);
+                cube, B.PhysicsImpostor.BoxImpostor, {mass: PAWN_MASS, friction: 0, restitution: 1}, this.scene);
         this.cubeMesh = cube;
     };
     
     Pawn.prototype.update = function(){
-        console.log("Updating pawn " + this.name);
+        if(!!this.targetPosition && !this.moving){
+            var targetPositionVector = new B.Vector3(this.targetPosition.x, 0, this.targetPosition.z);
+            var positionGroundProjection = new B.Vector3(this.cubeMesh.position.x, 0, this.cubeMesh.position.z);
+            var velocityDirection = targetPositionVector.subtract(positionGroundProjection).normalize();
+            this.cubeMesh.physicsImpostor.setLinearVelocity(
+                    velocityDirection);
+            this.moving = true;
+        }
+        else if(!!this.targetPosition && this.moving){
+            var targetReached = false;
+            
+            var targetPositionVector = new B.Vector3(this.targetPosition.x, 0, this.targetPosition.z);
+            var positionGroundProjection = new B.Vector3(this.cubeMesh.position.x, 0, this.cubeMesh.position.z);
+            var distanceSquared = B.Vector3.DistanceSquared(targetPositionVector, positionGroundProjection);
+            console.log("distance: ", distanceSquared);
+            targetReached = distanceSquared <= .1;
+            
+            if(targetReached){
+                this.cubeMesh.physicsImpostor.setLinearVelocity(B.Vector3.Zero());
+                this.targetPosition = false;
+                this.moving = false;
+            }
+        }
+    };
+    
+    Pawn.prototype.moveTo = function(targetPositionVector){
+        this.targetPosition = targetPositionVector;
+        this.moving = false;
     };
     
     Pawn.prototype.die = function () {
@@ -31,4 +61,4 @@ var PAWN_MASS = 10;
         }
     };
       
-})();
+})(); 
