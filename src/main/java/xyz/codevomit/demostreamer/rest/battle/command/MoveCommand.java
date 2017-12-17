@@ -1,4 +1,4 @@
-package xyz.codevomit.demostreamer.rest.battle;
+package xyz.codevomit.demostreamer.rest.battle.command;
 
 import lombok.Data;
 
@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 public class MoveCommand
 {
+    String type = "move";
     String username;
     Double x;
     Double y;

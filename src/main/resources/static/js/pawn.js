@@ -1,7 +1,8 @@
 var B = BABYLON;
 var PAWN_SIZE = 1;
 var PAWN_MASS = 10;
-var PAWN_MAX_VELOCITY_MAGNITUDE =1;
+var PAWN_MAX_VELOCITY_MAGNITUDE = 1;
+var PAWN_VELOCITY_SCALE_FACTOR = 2.5;
 (function(){
     
     Pawn = function(name, x, z, scene, listener){
@@ -27,7 +28,8 @@ var PAWN_MAX_VELOCITY_MAGNITUDE =1;
         if(!!this.targetPosition && !this.moving){
             var targetPositionVector = new B.Vector3(this.targetPosition.x, 0, this.targetPosition.z);
             var positionGroundProjection = new B.Vector3(this.cubeMesh.position.x, 0, this.cubeMesh.position.z);
-            var velocityDirection = targetPositionVector.subtract(positionGroundProjection).normalize();
+            var velocityVersor = targetPositionVector.subtract(positionGroundProjection).normalize();
+            var velocityDirection = velocityVersor.scaleInPlace(PAWN_VELOCITY_SCALE_FACTOR);
             this.cubeMesh.physicsImpostor.setLinearVelocity(
                     velocityDirection);
             this.moving = true;
@@ -38,7 +40,7 @@ var PAWN_MAX_VELOCITY_MAGNITUDE =1;
             var targetPositionVector = new B.Vector3(this.targetPosition.x, 0, this.targetPosition.z);
             var positionGroundProjection = new B.Vector3(this.cubeMesh.position.x, 0, this.cubeMesh.position.z);
             var distanceSquared = B.Vector3.DistanceSquared(targetPositionVector, positionGroundProjection);
-            console.log("distance: ", distanceSquared);
+            // console.log("distance^2: ", distanceSquared);
             targetReached = distanceSquared <= .1;
             
             if(targetReached){
@@ -56,7 +58,7 @@ var PAWN_MAX_VELOCITY_MAGNITUDE =1;
     
     Pawn.prototype.die = function () {
         this.scene.removeMesh(this.object);
-        if (this.listener && this.listener.onRippleDead && typeof (this.listener.onPawnDead) === 'function') {
+        if (this.listener && this.listener.onPawnDead && typeof (this.listener.onPawnDead) === 'function') {
             this.listener.onPawnDead(this);
         }
     };

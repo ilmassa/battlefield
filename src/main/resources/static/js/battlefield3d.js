@@ -2,6 +2,8 @@
     console.log("Battlefield 3D: initializing environment...");
     var B = BABYLON;
     
+    this.stompClient = {};
+    
     Battlefield = function(canvasId){
         this.canvasId = canvasId;
         this.ripples = [];
@@ -27,7 +29,8 @@
 //            console.log("pickedResult: ", pickResult);
             if(pickResult.hit && event.button === 2){
                 self.addRipple(pickResult.pickedPoint.x, pickResult.pickedPoint.z);
-                self.playerPawn.moveTo(pickResult.pickedPoint);
+//                self.playerPawn.moveTo(pickResult.pickedPoint);
+                self.sendMoveMyPawnCommand(pickResult.pickedPoint);
             }
         };
         
@@ -104,10 +107,73 @@
         }
     };
         
-    Battlefield.prototype.addPawn = function(name, x, z){
+    Battlefield.prototype.addPlayerPawn = function(name, x, z){
+        console.log("Adding palyer pawn at: [" + x + ", " + z + "]");
+        this.playerPawn = this.addOtherPawn(name, x, z);
+        return this.playerPawn;
+    };
+    
+    Battlefield.prototype.addOtherPawn = function(name, x, z){
+        console.log("Adding generic pawn at: [" + x + ", " + z + "]");
         var pawn = new Pawn(name, x, z, this.scene, this);
-        this.playerPawn = pawn;
         this.pawns[name] = pawn;
+        return pawn;
+    };
+    
+    Battlefield.prototype.stop = function(){
+        console.log("TODO: Implement stop function");
+    };
+    
+    Battlefield.prototype.sendAddMyPlayerMessage = function(stompClient){
+        console.log("About to send addMessage to add current player");
+        var message = {
+            username: this.username,
+            x: 0,
+            y: 0
+        };
+        stompClient.send("/app/join", {}, JSON.stringify(message));
+    };
+    
+    Battlefield.prototype.sendMoveMyPawnCommand = function(pickedPoint){
+      var message = {
+          username: this.username,
+          x: pickedPoint.x,
+          y: pickedPoint.z
+      };  
+      this.stompClient.send("/app/move", {}, JSON.stringify(message));
+    };
+    
+    Battlefield.prototype.handleMessage = function(message){
+        console.log("Battlefield handling message: ", message);
+        var messagePayload = JSON.parse(message.body);
+        var handlerFunction = Battlefield.messageHandlers[messagePayload.type];
+        var self = this;
+        return handlerFunction.call(self, messagePayload);
+    };
+    
+    Battlefield.messageHandlers = {
+        "add": function(payload){
+            console.log("Add command handler: ", payload);
+            if(payload.username === this.username){
+                this.addPlayerPawn(payload.username, payload.x, payload.y);
+                return;
+            }
+            this.addOtherPawn(payload.username, payload.x, payload.y);
+        },
+        
+        "move": function(payload){
+            console.log("Move command message: ", payload);
+            var target = new BABYLON.Vector3(payload.x, 0, payload.y);
+            if(!this.pawns.hasOwnProperty(payload.username)){
+                console.log("Unknown player paws '%s'. The pawn will be added", payload.username);
+                this.addOtherPawn(payload.username, 2, 2);
+            }
+            this.pawns[payload.username].moveTo(target);
+        },
+        
+        "fire": function(payload){
+            console.log("Fire command handler");
+        }
     };
 
 })();

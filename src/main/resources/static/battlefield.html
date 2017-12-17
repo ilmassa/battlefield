@@ -30,7 +30,7 @@
             }
         </style>
     </head>
-    <body oncontextmenu="return false;">
+    <body oncontextmenu="return false;"> 
         <noscript>
             <h2 style="color: #ff0000">
                 Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
@@ -40,8 +40,8 @@
         <div>
             <div>
                 <input id="username" type="text" value="guest">
-                <button id="connect" >Connect</button>
-                <button id="disconnect" >Disconnect</button>
+                <button id="connectButton" onclick="connect();">Connect</button>
+                <button id="disconnectButton" onclick="disconnect();">Disconnect</button>
             </div>
             <div id="graphContainer">
                 <canvas id="battlefieldCanvas" class="battlefield">
