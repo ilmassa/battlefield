@@ -1,6 +1,7 @@
-(function () {
+(function () {    
     console.log("Battlefield 3D: initializing environment...");
     var B = BABYLON;
+    var BULLET_VELOCITY_SCALE_FACTOR = 20;
     
     this.stompClient = {};
     
@@ -28,9 +29,17 @@
 //            console.log("event: ", event);
 //            console.log("pickedResult: ", pickResult);
             if(pickResult.hit && event.button === 2){
-                self.addRipple(pickResult.pickedPoint.x, pickResult.pickedPoint.z);
-//                self.playerPawn.moveTo(pickResult.pickedPoint);
-                self.sendMoveMyPawnCommand(pickResult.pickedPoint);
+                var meshId = pickResult.pickedMesh.id;
+                console.log("Picked mesh '%s'", meshId);
+                if(meshId !== self.username
+                        && self.pawns.hasOwnProperty(meshId)){
+                    self.sendFireCommand(pickResult);
+                }
+                else{
+                    self.addRipple(pickResult.pickedPoint.x, pickResult.pickedPoint.z);
+//                  self.playerPawn.moveTo(pickResult.pickedPoint);
+                    self.sendMoveMyPawnCommand(pickResult.pickedPoint);
+                }
             }
         };
         
@@ -56,18 +65,13 @@
         this.camera = new BABYLON.ArcRotateCamera("Camera", 0, Math.PI / 3, 50, BABYLON.Vector3.Zero(), this.scene);
         this.camera.setTarget(BABYLON.Vector3.Zero());
         this.camera.attachControl(this.canvas, false);
+        
         var light = new B.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), this.scene);
+        var directionalLight = new B.DirectionalLight("light2", new B.Vector3(1, -1, 1), this.scene);
+        
         // Physics
         this.scene.enablePhysics(new B.Vector3(0, -9.81, 0), new BABYLON.CannonJSPlugin());
 //        this.scene.enablePhysics(new B.Vector3(0, -9.81, 0), new B.OimoJSPlugin());
-        
-        // Sphere cannonball test 
-        var sphere = B.MeshBuilder.CreateSphere('sphere', {segments: 16, diameter: 1}, this.scene);
-        // move the sphere upward 1/2 of its height
-        sphere.position.y = 4;
-        sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass:  1 }, this.scene);;
-        sphere.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(.1, 15, 0));
-        // Sphere cannonball test -- end
 
         // create a built-in "ground" shape; 
         var ground = B.Mesh.CreateGround('ground1', 40, 40, 2, this.scene);
@@ -85,6 +89,32 @@
         cube.physicsImpostor = new B.PhysicsImpostor(
                 cube, B.PhysicsImpostor.BoxImpostor, {mass: 10, friction: 1, restitution: 1}, this.scene);
         return cube;
+    };
+    
+    Battlefield.prototype.addBullet = function(firingUsername, targetPositionVector){
+        if( ! this.pawns.hasOwnProperty(firingUsername)){
+            console.warn("Pawns named '%s' not found", firingUsername);
+            return;
+        }
+        var firingPawn = this.pawns[firingUsername];
+        var sphere = B.MeshBuilder.CreateSphere('sphere', {segments: 16, diameter: 1}, this.scene);
+        // move the sphere upward 1/2 of its height
+        sphere.position.x = firingPawn.cubeMesh.position.x;
+        sphere.position.y = 1.5;
+        sphere.position.z = firingPawn.cubeMesh.position.z;
+        
+        var material = new B.StandardMaterial("bullet_material", this.scene);
+        material.diffuseColor = new B.Color3(0.1, 0.1, 0.1);
+        material.specularColor = new B.Color3(.9, .9, .9);
+        sphere.material = material;
+        
+        sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
+                sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass:  1 }, this.scene);
+        
+        var bulletVersor = targetPositionVector.subtract(firingPawn.cubeMesh.position).normalize();
+        var bulletVelocity = bulletVersor.scale(BULLET_VELOCITY_SCALE_FACTOR);
+        
+        sphere.physicsImpostor.setLinearVelocity(bulletVelocity);
     };
     
     Battlefield.prototype.addRipple = function(x, z){
@@ -143,6 +173,17 @@
       this.stompClient.send("/app/move", {}, JSON.stringify(message));
     };
     
+    Battlefield.prototype.sendFireCommand = function(pickResult){
+        var point = pickResult.pickedPoint;
+        var message = {
+            username: this.username,
+            x: point.x,
+            y: point.y,
+            z: point.z
+        };
+        this.stompClient.send("/app/fire", {}, JSON.stringify(message));
+    };
+    
     Battlefield.prototype.handleMessage = function(message){
         console.log("Battlefield handling message: ", message);
         var messagePayload = JSON.parse(message.body);
@@ -172,7 +213,9 @@
         },
         
         "fire": function(payload){
-            console.log("Fire command handler");
+            console.log("Fire command handler ", payload);
+            var targetVector = new B.Vector3(payload.x, payload.y, payload.z);
+            this.addBullet(payload.username, targetVector);
         }
     };
 

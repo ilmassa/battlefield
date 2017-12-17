@@ -1,16 +1,19 @@
 package xyz.codevomit.demostreamer.rest.battle.command;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  *
  * @author merka
  */
 @Data
-public class MoveCommand
+@EqualsAndHashCode(callSuper = true)
+public class MoveCommand extends BattlefieldCommand
 {
     String type = "move";
-    String username;
+    Double positionX;
+    Double positionY;            
     Double x;
     Double y;
 }

@@ -1,6 +1,7 @@
 var B = BABYLON;
 var PAWN_SIZE = 1;
 var PAWN_MASS = 10;
+var PAWN_FRICTION = 0;
 var PAWN_MAX_VELOCITY_MAGNITUDE = 1;
 var PAWN_VELOCITY_SCALE_FACTOR = 2.5;
 (function(){
@@ -19,12 +20,24 @@ var PAWN_VELOCITY_SCALE_FACTOR = 2.5;
         var cube = BABYLON.MeshBuilder.CreateBox(name,
             {size: PAWN_SIZE}, scene);
         cube.position.y = PAWN_SIZE / 2;
+        
+        var material = new B.StandardMaterial(name + "_material", scene);
+        material.diffuseColor = new B.Color3(Math.random(), Math.random(), Math.random());
+        cube.material = material;
+        
         cube.physicsImpostor = new B.PhysicsImpostor(
-                cube, B.PhysicsImpostor.BoxImpostor, {mass: PAWN_MASS, friction: 0, restitution: 1}, this.scene);
+                cube, B.PhysicsImpostor.BoxImpostor, {mass: PAWN_MASS, friction: PAWN_FRICTION, restitution: 1}, this.scene);
         this.cubeMesh = cube;
     };
     
     Pawn.prototype.update = function(){
+        if(this.cubeMesh.position.y < 0){
+            // falling into infinity
+            // this.respawn();
+            this.cubeMesh.position = new B.Vector3(0, 2, 0);
+            this.cubeMesh.physicsImpostor.setLinearVelocity(B.Vector3.Zero());
+        }
+        
         if(!!this.targetPosition && !this.moving){
             var targetPositionVector = new B.Vector3(this.targetPosition.x, 0, this.targetPosition.z);
             var positionGroundProjection = new B.Vector3(this.cubeMesh.position.x, 0, this.cubeMesh.position.z);

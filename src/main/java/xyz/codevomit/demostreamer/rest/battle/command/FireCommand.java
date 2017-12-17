@@ -1,11 +1,9 @@
 package xyz.codevomit.demostreamer.rest.battle.command;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import xyz.codevomit.demostreamer.account.Player;
 
 /**
  *
@@ -15,10 +13,10 @@ import xyz.codevomit.demostreamer.account.Player;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class AddCommand extends BattlefieldCommand
+public class FireCommand extends BattlefieldCommand
 {
-    String type = "add";
-    Double x;
-    Double y;
-    List<Player> players;
+    String type = "fire";
+    Long x;
+    Long y;
+    Long z;
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import xyz.codevomit.demostreamer.account.Player;
 import xyz.codevomit.demostreamer.exception.UsernameAlreadyInUseException;
 import xyz.codevomit.demostreamer.rest.battle.command.AddCommand;
+import xyz.codevomit.demostreamer.rest.battle.command.FireCommand;
 
 /**
  *
@@ -56,5 +57,13 @@ public class BattlefieldController
     {
         log.debug("Move command received: {}", moveCommand);
         return moveCommand;
+    }
+
+    @MessageMapping("/fire")
+    @SendTo("/topic/battlefield")
+    public FireCommand handleFireCommandMessage(FireCommand fireCommand)
+    {
+        log.debug("Fire commnad received: {}", fireCommand);
+        return fireCommand;
     }
 }
