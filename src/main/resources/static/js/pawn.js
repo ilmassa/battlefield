@@ -69,6 +69,11 @@ var PAWN_VELOCITY_SCALE_FACTOR = 2.5;
         this.moving = false;
     };
     
+    Pawn.prototype.syncPosition = function(position, linearVelocity){
+        this.cubeMesh.position = position;
+        this.cubeMesh.physicsImpostor.setLinearVelocity(linearVelocity);
+    };
+    
     Pawn.prototype.die = function () {
         this.scene.removeMesh(this.object);
         if (this.listener && this.listener.onPawnDead && typeof (this.listener.onPawnDead) === 'function') {

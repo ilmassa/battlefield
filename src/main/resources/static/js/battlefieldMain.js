@@ -1,6 +1,8 @@
 (function(){
     console.log("Initializing game instance");
     
+    var SYNC_TIMEOUT_MILLIS = 2000;
+    
     var stompClient = {};
         
     battlefield = new Battlefield('battlefieldCanvas');
@@ -13,6 +15,11 @@
     window.addEventListener('resize', function () {
         battlefield.engine.resize();
     });
+    
+    function sync(){
+        battlefield.sendSyncCommand();
+        setTimeout(sync, SYNC_TIMEOUT_MILLIS);
+    };
     
     function addGameObjects() {
         // battlefield.addCube(20, 20, 0);
@@ -35,9 +42,8 @@
         stompClient.subscribe("/topic/battlefield", onMessageReceived);
         var username = $('#username').val();
         battlefield.username = username;
-        battlefield.sendAddMyPlayerMessage(stompClient);
-//        var pawn = battlefield.addPlayerPawn(username, 0, 0);
-//        battlefield.sendProbeMessage("username: " + username);
+        battlefield.sendAddMyPlayerMessage(stompClient);    
+        setTimeout(sync, SYNC_TIMEOUT_MILLIS);
     };
     
     onMessageReceived = function(message){

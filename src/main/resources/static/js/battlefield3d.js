@@ -184,6 +184,26 @@
         this.stompClient.send("/app/fire", {}, JSON.stringify(message));
     };
     
+    Battlefield.prototype.sendSyncCommand = function(){
+        var playerPawn = this.pawns[this.username];
+        var velocity = playerPawn.cubeMesh.physicsImpostor.getLinearVelocity();
+        var message = {
+            username: this.username,
+            
+            velocityX: velocity.x,
+            velocityY: velocity.y,
+            velocityZ: velocity.z,
+            
+            x: playerPawn.cubeMesh.position.x,
+            y: playerPawn.cubeMesh.position.y,
+            z: playerPawn.cubeMesh.position.z
+        };
+        
+        if(this.stompClient){
+            this.stompClient.send("/app/sync", {}, JSON.stringify(message));
+        }
+    };
+    
     Battlefield.prototype.handleMessage = function(message){
         console.log("Battlefield handling message: ", message);
         var messagePayload = JSON.parse(message.body);
@@ -216,6 +236,21 @@
             console.log("Fire command handler ", payload);
             var targetVector = new B.Vector3(payload.x, payload.y, payload.z);
             this.addBullet(payload.username, targetVector);
+        },
+        
+        "sync": function(payload){
+            console.log("Sync command handler ", payload);
+            if (!this.pawns.hasOwnProperty(payload.username)) {
+                console.log("Unknown player paws '%s'. The pawn will be added", payload.username);
+                this.addOtherPawn(payload.username, payload.x, payload.z);
+            }
+            
+            if(this.pawns.hasOwnProperty(payload.username)
+                    && payload.username !== this.username)
+            {
+                this.pawns[payload.username].syncPosition(new B.Vector3(payload.x, payload.y, payload.z),
+                    new B.Vector3(payload.velocityX, payload.velocityY, payload.velocityZ));
+            }
         }
     };
 

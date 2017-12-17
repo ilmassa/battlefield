@@ -11,6 +11,7 @@ import xyz.codevomit.demostreamer.account.Player;
 import xyz.codevomit.demostreamer.exception.UsernameAlreadyInUseException;
 import xyz.codevomit.demostreamer.rest.battle.command.AddCommand;
 import xyz.codevomit.demostreamer.rest.battle.command.FireCommand;
+import xyz.codevomit.demostreamer.rest.battle.command.SyncCommand;
 
 /**
  *
@@ -65,5 +66,13 @@ public class BattlefieldController
     {
         log.debug("Fire commnad received: {}", fireCommand);
         return fireCommand;
+    }
+    
+    @MessageMapping("/sync")
+    @SendTo("/topic/battlefield")
+    public SyncCommand handleFireCommandMessage(SyncCommand syncCommand)
+    {
+        log.debug("Sync commnad received: {}", syncCommand);
+        return syncCommand;
     }
 }
