@@ -26,19 +26,22 @@
         });
         
         innerScene.onPointerDown = function(event, pickResult){
-//            console.log("event: ", event);
-//            console.log("pickedResult: ", pickResult);
-            if(pickResult.hit && event.button === 2){
+            console.log("event: ", event);
+            console.log("pickedResult: ", pickResult);
+            if (pickResult.hit && event.button === 2) {
+                // right click
+
+                self.addRipple(pickResult.pickedPoint.x, pickResult.pickedPoint.z);
+//                  self.playerPawn.moveTo(pickResult.pickedPoint);
+                self.sendMoveMyPawnCommand(pickResult.pickedPoint);
+
+            }
+            else if (pickResult.hit && event.button === 0) {
+                // left click
                 var meshId = pickResult.pickedMesh.id;
                 console.log("Picked mesh '%s'", meshId);
-                if(meshId !== self.username
-                        && self.pawns.hasOwnProperty(meshId)){
+                if (meshId !== self.username) {
                     self.sendFireCommand(pickResult);
-                }
-                else{
-                    self.addRipple(pickResult.pickedPoint.x, pickResult.pickedPoint.z);
-//                  self.playerPawn.moveTo(pickResult.pickedPoint);
-                    self.sendMoveMyPawnCommand(pickResult.pickedPoint);
                 }
             }
         };
@@ -73,8 +76,16 @@
         this.scene.enablePhysics(new B.Vector3(0, -9.81, 0), new BABYLON.CannonJSPlugin());
 //        this.scene.enablePhysics(new B.Vector3(0, -9.81, 0), new B.OimoJSPlugin());
 
+        // Add GUI capabilities
+        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("battlefieldGUI");
+        this.advancedTexture = advancedTexture;
+
         // create a built-in "ground" shape; 
         var ground = B.Mesh.CreateGround('ground1', 40, 40, 2, this.scene);
+        var groundMaterial = new B.StandardMaterial('ground_metarial', this.scene);
+        groundMaterial.diffuseColor = new B.Color3(0.2, 0.25, 0.1);
+        ground.material = groundMaterial;
+        
         ground.physicsImpostor = new BABYLON.PhysicsImpostor(
                 ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.5, restitution: 0.7 }, this.scene);
         
@@ -113,6 +124,7 @@
         
         var bulletVersor = targetPositionVector.subtract(firingPawn.cubeMesh.position).normalize();
         var bulletVelocity = bulletVersor.scale(BULLET_VELOCITY_SCALE_FACTOR);
+        bulletVelocity.y = 5;
         
         sphere.physicsImpostor.setLinearVelocity(bulletVelocity);
     };
@@ -147,6 +159,23 @@
         console.log("Adding generic pawn at: [" + x + ", " + z + "]");
         var pawn = new Pawn(name, x, z, this.scene, this);
         this.pawns[name] = pawn;
+        
+        var label = new BABYLON.GUI.Rectangle("label for " + name);
+        label.background = "black";
+        label.height = "20px";
+        label.alpha = 0.5;
+        label.width = "80px";
+        label.cornerRadius = 20;
+        label.thickness = 1;
+        label.linkOffsetY = -20;
+        this.advancedTexture.addControl(label);
+        label.linkWithMesh(pawn.cubeMesh);
+
+        var text1 = new BABYLON.GUI.TextBlock();
+        text1.text = name;
+        text1.color = "white";
+        label.addControl(text1);
+        
         return pawn;
     };
     

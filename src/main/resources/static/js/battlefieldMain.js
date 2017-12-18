@@ -9,7 +9,6 @@
     
     window.addEventListener('DOMContentLoaded', function(){
         battlefield.init();
-        addGameObjects();
     });
     
     window.addEventListener('resize', function () {
@@ -20,12 +19,6 @@
         battlefield.sendSyncCommand();
         setTimeout(sync, SYNC_TIMEOUT_MILLIS);
     };
-    
-    function addGameObjects() {
-        // battlefield.addCube(20, 20, 0);
-//        battlefield.addPawn("initialPawn", 0, 0);
-//        battlefield.addRipple(4, 4);
-    }
     
     connect = function(){
         $('#disconnectButton').attr("disabled", "false");
