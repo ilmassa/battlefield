@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>xyz.codevomit</groupId>
-    <artifactId>demo-streamer</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>battlefield</artifactId>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>demo-streamer</name>
-    <description>Demo project for Spring Boot</description>
+    <name>battlefield</name>
+    <description>A minimal HTML5 multiplayer game based on BabylonJS and Spring Boot</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -77,8 +77,6 @@
             <version>2.6</version>
         </dependency>
 
-
-		
         <dependency>
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
