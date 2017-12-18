@@ -64,13 +64,22 @@
         var self = this;
         this.scene = new B.Scene(this.engine);
         this.scene.__debugId = "scene01";
-        //this.camera = new B.FreeCamera('camera', new BABYLON.Vector3(2, 10, -20), this.scene);
+//        this.camera = new B.FollowCamera("FollowCamera", new B.Vector3(0, 10, -50), this.scene);
+//        this.camera.radius = 40;
+//        this.camera.heightOffset = 35;
+//        this.camera.rotationOffset = 0;
+//        this.camera.cameraAcceleration = 0.005;
+        //The speed at which acceleration is halted 
+//        this.camera.maxCameraSpeed = 10;
+
         this.camera = new BABYLON.ArcRotateCamera("Camera", 0, Math.PI / 3, 50, BABYLON.Vector3.Zero(), this.scene);
         this.camera.setTarget(BABYLON.Vector3.Zero());
+        
         this.camera.attachControl(this.canvas, false);
         
-        var light = new B.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), this.scene);
+        var light = new B.HemisphericLight('light1', new BABYLON.Vector3(0, 30, 0), this.scene);
         var directionalLight = new B.DirectionalLight("light2", new B.Vector3(1, -1, 1), this.scene);
+        var directionalLight2 = new B.DirectionalLight("light3", new B.Vector3(1, 1, 1), this.scene);
         
         // Physics
         this.scene.enablePhysics(new B.Vector3(0, -9.81, 0), new BABYLON.CannonJSPlugin());
@@ -83,12 +92,15 @@
         // create a built-in "ground" shape; 
         var ground = B.Mesh.CreateGround('ground1', 40, 40, 2, this.scene);
         var groundMaterial = new B.StandardMaterial('ground_metarial', this.scene);
-        groundMaterial.diffuseColor = new B.Color3(0.2, 0.25, 0.1);
+        groundMaterial.diffuseColor = new B.Color3(0.2, 0.3, 0.1);
+        groundMaterial.specularColor = new B.Color3(0.25, 0.35, 0.15)
+        groundMaterial.backFaceCulling = false;
         ground.material = groundMaterial;
         
         ground.physicsImpostor = new BABYLON.PhysicsImpostor(
                 ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.5, restitution: 0.7 }, this.scene);
         
+        // this.camera.lockedTarget = ground;
         // return the created scene
         return this.scene;
     };
