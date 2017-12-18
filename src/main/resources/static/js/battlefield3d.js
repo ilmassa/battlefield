@@ -1,7 +1,7 @@
 (function () {    
     console.log("Battlefield 3D: initializing environment...");
     var B = BABYLON;
-    var BULLET_VELOCITY_SCALE_FACTOR = 20;
+    var BULLET_VELOCITY_SCALE_FACTOR = 40;
     
     this.stompClient = {};
     
@@ -142,7 +142,6 @@
         
         var bulletVersor = targetPositionVector.subtract(firingPawn.cubeMesh.position).normalize();
         var bulletVelocity = bulletVersor.scale(BULLET_VELOCITY_SCALE_FACTOR);
-        bulletVelocity.y = 5;
         
         sphere.physicsImpostor.setLinearVelocity(bulletVelocity);
         this.shadowGenerator.addShadowCaster(sphere, true);
@@ -272,7 +271,7 @@
         },
         
         "move": function(payload){
-            console.log("Move command message: ", payload);
+            console.log("MoveWithVelocity command message: ", payload);
             var target = new BABYLON.Vector3(payload.x, 0, payload.y);
             if(!this.pawns.hasOwnProperty(payload.username)){
                 console.log("Unknown player paws '%s'. The pawn will be added", payload.username);
