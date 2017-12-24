@@ -2,6 +2,8 @@
     console.log("Battlefield 3D: initializing environment...");
     var B = BABYLON;
     var BULLET_VELOCITY_SCALE_FACTOR = 40;
+    var PAWN_MASS = 1;
+    var BULLET_MASS = 10;
     
     this.stompClient = {};
     
@@ -116,7 +118,7 @@
         var cube = B.MeshBuilder.CreateBox(name, 6.0, this.scene);
         cube.position.y = 2;
         cube.physicsImpostor = new B.PhysicsImpostor(
-                cube, B.PhysicsImpostor.BoxImpostor, {mass: 10, friction: 1, restitution: 1}, this.scene);
+                cube, B.PhysicsImpostor.BoxImpostor, {mass: PAWN_MASS, friction: 1, restitution: 1}, this.scene);
         return cube;
     };
     
@@ -138,7 +140,7 @@
         sphere.material = material;
         
         sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
-                sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass:  1 }, this.scene);
+                sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass:  BULLET_MASS }, this.scene);
         
         var bulletVersor = targetPositionVector.subtract(firingPawn.cubeMesh.position).normalize();
         var bulletVelocity = bulletVersor.scale(BULLET_VELOCITY_SCALE_FACTOR);

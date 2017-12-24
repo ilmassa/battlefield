@@ -1,9 +1,13 @@
 package xyz.codevomit.demostreamer.rest.battle;
 
+import java.security.Principal;
+import java.util.Map;
 import xyz.codevomit.demostreamer.rest.battle.command.MoveCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.core.MessageSendingOperations;
+import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -67,12 +71,15 @@ public class BattlefieldController
         log.debug("Fire commnad received: {}", fireCommand);
         return fireCommand;
     }
-    
+
     @MessageMapping("/sync")
     @SendTo("/topic/battlefield")
-    public SyncCommand handleFireCommandMessage(SyncCommand syncCommand)
+    public SyncCommand handleFireCommandMessage(SyncCommand syncCommand,
+            MessageHeaders headers)
     {
         log.debug("Sync commnad received: {}", syncCommand);
+        log.debug("Headers: {}:", headers);
+
         return syncCommand;
     }
 }
