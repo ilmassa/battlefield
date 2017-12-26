@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+    <head>
+        <title>Battlefield 3D</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" 
+              href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+              crossorigin="anonymous"> </link>
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" 
+              href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" 
+              crossorigin="anonymous"></link>
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
+        crossorigin="anonymous"></script>
+
+    </head>
+    <body>
+        <div class="container">
+            <h1>Battlefield 3D</h1>
+            <h2>a minimal HTML5 multiplayer game based on BabylonJS and WebSocket</h2>
+            <div>
+                <form th:action="@{/login}" method="post">
+                    <h3>Choose your username</h3>
+                    <div>
+                        <label for="username">Username: </label>
+                        <input type="text" id="username" name="username"></input>
+                    </div>
+                    <input type="submit" id="join" value="Join"></input>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
