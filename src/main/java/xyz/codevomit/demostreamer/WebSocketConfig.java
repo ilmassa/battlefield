@@ -2,6 +2,7 @@ package xyz.codevomit.demostreamer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
@@ -19,6 +20,9 @@ import xyz.codevomit.demostreamer.rest.battle.BattlefieldHandshakeInterceptor;
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer
 {
 
+    @Value("${server.contextPath}")
+    String serverContextPath;
+    
     @Autowired
     BattlefieldHandshakeInterceptor battlefieldHandshakeInterceptor;
 
@@ -30,7 +34,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer
                 .withSockJS();
         log.debug("Registration of endpoit '/stream': DONE");
         stompEndpointRegistry.addEndpoint("/battlefield").withSockJS()
-                .setInterceptors(battlefieldHandshakeInterceptor);;
+                .setInterceptors(battlefieldHandshakeInterceptor);
         log.debug("Registration of endpoit '/battlefield': DONE");
     }
 
@@ -38,7 +42,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer
     public void configureMessageBroker(MessageBrokerRegistry registry)
     {
         registry.enableSimpleBroker("/topic");
-        registry.setApplicationDestinationPrefixes("/app");
+        registry.setApplicationDestinationPrefixes(serverContextPath + "/app");
     }
 
 }

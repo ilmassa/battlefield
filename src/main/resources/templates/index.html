@@ -4,7 +4,7 @@
         <title>Battlefield 3D</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+        <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" 
               href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
@@ -23,16 +23,27 @@
     <body>
         <div class="container">
             <h1>Battlefield 3D</h1>
-            <h2>a minimal HTML5 multiplayer game based on BabylonJS and WebSocket</h2>
+            <h2>A minimal HTML5 multiplayer game based on BabylonJS and WebSocket</h2>
             <div>
-                <form th:action="@{/login}" method="post">
-                    <h3>Choose your username</h3>
-                    <div>
-                        <label for="username">Username: </label>
-                        <input type="text" id="username" name="username"></input>
+                <div th:if="${user == null}">
+                    <form th:action="@{/login}" method="post">
+                        <h3>Choose your username</h3>
+                        <div>
+                            <label for="username">Username: </label>
+                            <input type="text" id="username" name="username"></input>
+                        </div>
+                        <input type="submit" id="join" value="Join"></input>
+                    </form>
+                </div>
+                <div th:if="${user != null}">
+                    <form th:action="@{/custom-logout}" method="post">
+                        <input type="submit" id="customLogout" value="Logout"></input>
+                    </form>
+                </div>
+                <div th:if="${errorMessage != null}">
+                    <div class="alert alert-danger" th:text="${errorMessage}">
                     </div>
-                    <input type="submit" id="join" value="Join"></input>
-                </form>
+                </div>
             </div>
         </div>
     </body>

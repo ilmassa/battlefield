@@ -7,12 +7,13 @@
     
     this.stompClient = {};
     
-    Battlefield = function(canvasId){
+    Battlefield = function(canvasId, serverContextPath){
         this.canvasId = canvasId;
         this.ripples = [];
         this.pawns = {};
         this.playerPawn = {};
         this.shadowGenerator = {};
+        this.serverContextPath = serverContextPath;
     };
     
     Battlefield.prototype.init = function () {
@@ -211,7 +212,7 @@
             x: 0,
             y: 0
         };
-        stompClient.send("/app/join", {}, JSON.stringify(message));
+        this.sendMessage("/app/join", {}, message);
     };
     
     Battlefield.prototype.sendMoveMyPawnCommand = function(pickedPoint){
@@ -220,7 +221,7 @@
           x: pickedPoint.x,
           y: pickedPoint.z
       };  
-      this.stompClient.send("/app/move", {}, JSON.stringify(message));
+      this.sendMessage("/app/move", {}, message);
     };
     
     Battlefield.prototype.sendFireCommand = function(pickResult){
@@ -231,7 +232,7 @@
             y: point.y,
             z: point.z
         };
-        this.stompClient.send("/app/fire", {}, JSON.stringify(message));
+        this.sendMessage("/app/fire", {}, message);
     };
     
     Battlefield.prototype.sendSyncCommand = function(){
@@ -250,7 +251,7 @@
         };
         
         if(this.stompClient){
-            this.stompClient.send("/app/sync", {}, JSON.stringify(message));
+            this.sendMessage("/app/sync", {}, message);
         }
     };
     
@@ -260,6 +261,10 @@
         var handlerFunction = Battlefield.messageHandlers[messagePayload.type];
         var self = this;
         return handlerFunction.call(self, messagePayload);
+    };
+    
+    Battlefield.prototype.sendMessage = function(relativeEndpointURL, headers, messageObject){
+        this.stompClient.send(this.serverContextPath + relativeEndpointURL, headers, JSON.stringify(messageObject));
     };
     
     Battlefield.messageHandlers = {

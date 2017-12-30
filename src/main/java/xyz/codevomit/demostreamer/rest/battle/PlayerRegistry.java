@@ -38,4 +38,9 @@ public class PlayerRegistry
     {
         return usernameToPlayerMap.containsKey(playerUsername);
     }
+
+    public Player getPlayer(String username)
+    {
+        return getUsernameToPlayerMap().get(username);
+    }
 }

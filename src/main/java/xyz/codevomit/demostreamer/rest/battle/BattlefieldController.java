@@ -1,13 +1,11 @@
 package xyz.codevomit.demostreamer.rest.battle;
 
-import java.security.Principal;
-import java.util.Map;
 import xyz.codevomit.demostreamer.rest.battle.command.MoveCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.core.MessageSendingOperations;
-import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -28,6 +26,9 @@ public class BattlefieldController
     MessageSendingOperations<String> messagingTemplate;
     PlayerRegistry playerRegistry;
 
+    @Value("${server.contextPath}")
+    String serverContextPath;
+    
     @Autowired
     public BattlefieldController(MessageSendingOperations<String> messageSendingOperation,
             PlayerRegistry playerRegistry)
@@ -40,11 +41,16 @@ public class BattlefieldController
     @SendTo("/topic/battlefield")
     public AddCommand handleAddPlayerMessage(AddCommand command)
     {
+        log.info("Received join message: {}", command);
+        Player addedPlayer = null;
         if (playerRegistry.playerExists(command.getUsername()))
         {
-            throw new UsernameAlreadyInUseException(command.getUsername());
+            addedPlayer = playerRegistry.getPlayer(command.getUsername());
         }
-        playerRegistry.addPlayer(new Player(command.getUsername()));
+        else
+        {
+            playerRegistry.addPlayer(new Player(command.getUsername()));
+        }
         return command;
     }
 
