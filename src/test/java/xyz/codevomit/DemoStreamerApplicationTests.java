@@ -37,21 +37,4 @@ public class DemoStreamerApplicationTests {
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
-
-    @Test
-    public void testGreeting() throws Exception {
-        RequestBuilder getBuilder = MockMvcRequestBuilders.get("/greeting");
-
-        MvcResult result = mockMvc.perform(getBuilder)
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().json("{\"id\":1, \"content\":\"Hello, World!\"}")).andReturn();
-        String content = result.getResponse().getContentAsString();
-        
-        Greeting expected = new Greeting(1L, "Hello, World!");
-        ObjectMapper mapper = new ObjectMapper();
-        Greeting received = mapper.readValue(content, Greeting.class);
-        Assert.assertEquals(expected, received);
-    }
-
 }

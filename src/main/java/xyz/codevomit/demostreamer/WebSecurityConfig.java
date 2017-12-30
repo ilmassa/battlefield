@@ -30,7 +30,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/login").permitAll()
                 .anyRequest().authenticated()            
                 .and().formLogin().loginPage("/").permitAll()
-                .and().logout().permitAll();
+                .and().logout().permitAll()
+                .and().csrf().disable();
     }
     
     @Autowired
