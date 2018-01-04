@@ -1,9 +1,9 @@
 (function () {    
     console.log("Battlefield 3D: initializing environment...");
     var B = BABYLON;
-    var BULLET_VELOCITY_SCALE_FACTOR = 40;
-    var PAWN_MASS = 1;
-    var BULLET_MASS = 10;
+    var BULLET_VELOCITY_SCALE_FACTOR = BATTLEFIELD_CONSTANTS.BULLET_VELOCITY_SCALE_FACTOR;
+    var PAWN_MASS = BATTLEFIELD_CONSTANTS.PAWN_MASS;
+    var BULLET_MASS = BATTLEFIELD_CONSTANTS.BULLET_MASS;
     
     this.stompClient = {};
     
@@ -110,9 +110,37 @@
                 ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.5, restitution: 0.7 }, this.scene);
         
          this.camera.lockedTarget = ground;
+
+         // background music...
+         this.isMusicPlaying = false;
+         this.music = new BABYLON.Sound("Music", this.serverContextPath+"/audio/main_theme.mp3", this.scene, function(){
+        	 self.music.setVolume(0.5);
+        	 self.toggleMusic();
+         }, { loop: true, autoplay: false });         
+         
+         
         // return the created scene
         return this.scene;
     };
+    
+    
+    Battlefield.prototype.toggleMusic = function(){
+    	if(this.music != undefined){
+    		if(this.isMusicPlaying){
+    			this.music.stop();
+    		} else {
+    			this.music.play();
+    		}
+    		this.isMusicPlaying = !this.isMusicPlaying;
+    		if(this.onToggleMusic !== undefined && typeof this.onToggleMusic == 'function'){
+    			this.onToggleMusic(this.isMusicPlaying);
+    		}
+    	}
+    }
+
+    Battlefield.prototype.changeUser = function(newUser){
+    	this.username = newUser;
+    }
     
     Battlefield.prototype.addCube = function(x, y, z){
         var name = "cube_" + Math.random();
@@ -198,23 +226,15 @@
         text1.color = "white";
         label.addControl(text1);
         
+        pawn.addLinkedObj(label);
+        
         return pawn;
     };
     
     Battlefield.prototype.stop = function(){
         console.log("TODO: Implement stop function");
     };
-    
-    Battlefield.prototype.sendAddMyPlayerMessage = function(stompClient){
-        console.log("About to send addMessage to add current player");
-        var message = {
-            username: this.username,
-            x: 0,
-            y: 0
-        };
-        this.sendMessage("/app/join", {}, message);
-    };
-    
+        
     Battlefield.prototype.sendMoveMyPawnCommand = function(pickedPoint){
       var message = {
           username: this.username,
@@ -237,20 +257,21 @@
     
     Battlefield.prototype.sendSyncCommand = function(){
         var playerPawn = this.pawns[this.username];
-        var velocity = playerPawn.cubeMesh.physicsImpostor.getLinearVelocity();
-        var message = {
-            username: this.username,
-            
-            velocityX: velocity.x,
-            velocityY: velocity.y,
-            velocityZ: velocity.z,
-            
-            x: playerPawn.cubeMesh.position.x,
-            y: playerPawn.cubeMesh.position.y,
-            z: playerPawn.cubeMesh.position.z
-        };
         
-        if(this.stompClient){
+        if(this.stompClient && this.stompClient.connected && playerPawn !== undefined){
+	        var velocity = playerPawn.cubeMesh.physicsImpostor.getLinearVelocity();
+	        var message = {
+	            username: this.username,
+	            
+	            velocityX: velocity.x,
+	            velocityY: velocity.y,
+	            velocityZ: velocity.z,
+	            
+	            x: playerPawn.cubeMesh.position.x,
+	            y: playerPawn.cubeMesh.position.y,
+	            z: playerPawn.cubeMesh.position.z
+	        };
+	        
             this.sendMessage("/app/sync", {}, message);
         }
     };
@@ -275,6 +296,14 @@
                 return;
             }
             this.addOtherPawn(payload.username, payload.x, payload.y);
+        },
+        
+        "quit": function(payload){
+        	console.log("Quit command handler: ", payload);
+        	if(payload.username !== this.username && this.pawns.hasOwnProperty(payload.username)){
+        		this.pawns[payload.username].die();
+        		delete this.pawns[payload.username];
+        	}
         },
         
         "move": function(payload){

@@ -1,4 +1,4 @@
-package xyz.codevomit.demostreamer.rest.battle.command;
+package xyz.codevomit.demostreamer.web.command;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,7 +11,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class MoveCommand extends BattlefieldCommand
 {
-    String type = "move";
+
+	private static final long serialVersionUID = -3071745272790486676L;
+	
+	String type = "move";
     Double positionX;
     Double positionY;            
     Double x;

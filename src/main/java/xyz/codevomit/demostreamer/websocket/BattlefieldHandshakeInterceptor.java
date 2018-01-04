@@ -1,12 +1,13 @@
-package xyz.codevomit.demostreamer.rest.battle;
+package xyz.codevomit.demostreamer.websocket;
 
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
@@ -15,17 +16,9 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
  * @author merka
  */
 @Slf4j
+@Component
 public class BattlefieldHandshakeInterceptor implements HandshakeInterceptor
 {
-
-    @Getter
-    @Setter
-    protected PlayerRegistry playerRegistry;
-    
-    public BattlefieldHandshakeInterceptor(PlayerRegistry playerRegistry)
-    {
-        this.playerRegistry = playerRegistry;
-    }
     
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, 
@@ -37,7 +30,8 @@ public class BattlefieldHandshakeInterceptor implements HandshakeInterceptor
         log.info("Principal = {}", request.getPrincipal());
         log.info("Remote address = {}", request.getRemoteAddress());
         
-        return true;
+        // only authenticated sessions are allowed
+        return (request.getPrincipal() != null);
     }
 
     @Override

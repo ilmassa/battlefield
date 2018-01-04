@@ -1,12 +1,10 @@
-package xyz.codevomit.demostreamer.rest.battle.command;
+package xyz.codevomit.demostreamer.web.command;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import xyz.codevomit.demostreamer.account.Player;
 
 /**
  *
@@ -17,10 +15,18 @@ import xyz.codevomit.demostreamer.account.Player;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class AddCommand extends BattlefieldCommand
+public class SyncCommand extends BattlefieldCommand
 {
-    String type = "add";
+
+	private static final long serialVersionUID = -3627218183939979310L;
+
+	String type = "sync";
+    
+    Double velocityX;
+    Double velocityY;
+    Double velocityZ;
+            
     Double x;
     Double y;
-    List<Player> players;
+    Double z;
 }
