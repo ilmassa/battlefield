@@ -32,7 +32,7 @@ public class HomePageController
     BattlefieldMessageHelper battlefieldMessageHelper;
     
     
-    @RequestMapping(value = "/js/application_constants.js")
+    @RequestMapping(value = "/conf/application_constants.js")
     @ResponseBody
     public String javaScriptConstants() throws JsonProcessingException {
     	

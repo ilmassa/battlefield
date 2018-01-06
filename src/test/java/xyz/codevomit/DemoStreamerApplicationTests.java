@@ -14,18 +14,18 @@ import org.springframework.web.context.WebApplicationContext;
 
 import xyz.codevomit.demostreamer.BattlefieldApplication;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = BattlefieldApplication.class)
-@WebAppConfiguration
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@SpringApplicationConfiguration(classes = BattlefieldApplication.class)
+//@WebAppConfiguration
 public class DemoStreamerApplicationTests {
 
     private static final Logger logger = LoggerFactory.getLogger(DemoStreamerApplicationTests.class);
     
     private MockMvc mockMvc;
-    @Autowired
+    //@Autowired
     private WebApplicationContext webApplicationContext;
 
-    @Before
+    //@Before
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
