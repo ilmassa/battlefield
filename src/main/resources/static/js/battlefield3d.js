@@ -78,6 +78,13 @@
 //        this.camera = new BABYLON.ArcRotateCamera("Camera", 0, Math.PI / 3, 50, BABYLON.Vector3.Zero(), this.scene);
 //        this.camera.setTarget(BABYLON.Vector3.Zero());
         
+        
+        // background image 
+        var background = new BABYLON.Layer("back", this.serverContextPath+"/pics/galaxy.jpg", this.scene);
+    	background.isBackground = true;
+    	background.texture.level = 0;
+    	background.texture.wAng = .2;
+        
         this.camera.attachControl(this.canvas, false);
         
         // lights
@@ -96,13 +103,17 @@
         var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("battlefieldGUI");
         this.advancedTexture = advancedTexture;
 
-        // create a built-in "ground" shape; 
-        var ground = B.Mesh.CreateGround('ground1', 40, 40, 2, this.scene);
-        var groundMaterial = new B.StandardMaterial('ground_metarial', this.scene);
+        
+        // create spaceship floor...
+        var damierTexture = new BABYLON.Texture(this.serverContextPath+"/pics/Scifi_texture_02.jpg", this.scene);
+        var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.scene);
+        groundMaterial.diffuseTexture = damierTexture;        
         groundMaterial.diffuseColor = new B.Color3(0.2, 0.3, 0.1);
         groundMaterial.specularColor = new B.Color3(0.25, 0.35, 0.15);
         groundMaterial.backFaceCulling = false;
         
+        // create a spaceship "ground" shape; 
+        var ground = B.Mesh.CreateGround('ground1', 90, 45, 2, this.scene);        
         ground.material = groundMaterial;
         ground.receiveShadows = true;
         
@@ -111,6 +122,8 @@
         
          this.camera.lockedTarget = ground;
 
+         
+         
          // background music...
          this.isMusicPlaying = false;
          this.music = new BABYLON.Sound("Music", this.serverContextPath+"/audio/main_theme.mp3", this.scene, function(){
@@ -140,6 +153,7 @@
 
     Battlefield.prototype.changeUser = function(newUser){
     	this.username = newUser;
+    	this.addPlayerPawn(this.username, 0, 0);
     }
     
     Battlefield.prototype.addCube = function(x, y, z){
@@ -291,11 +305,13 @@
     Battlefield.messageHandlers = {
         "add": function(payload){
             console.log("Add command handler: ", payload);
-            if(payload.username === this.username){
-                this.addPlayerPawn(payload.username, payload.x, payload.y);
-                return;
+            //if(payload.username === this.username && this.playerPawn == {}){
+            //    this.addPlayerPawn(payload.username, payload.x, payload.y);
+            //    return;
+            //}
+            if(payload.username !== this.username){
+            	this.addOtherPawn(payload.username, payload.x, payload.y);
             }
-            this.addOtherPawn(payload.username, payload.x, payload.y);
         },
         
         "quit": function(payload){
