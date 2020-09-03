@@ -17,8 +17,5 @@ This is not only a Web application, which is a kind of beast that I know fairly 
 
 When confronted with an issue that is new to me (e.g: how to synchronize player positions across several clients?), I usually try to solve it just with my knowledge and intuition (the "naive" way). Then, when the thing more or less works, I go back to read up and study the best practices, in order to understand what solutions I got right and what is wrong.
 
-### Play online
-Depending on the amount of personal free time and newly introduced bugs, an updated instance of the game should usually be available [here](http://www.codevomit.xyz/battlefield3d)
-
 ### Meta-Goals
 Learning Web Socket and techniques to build a message based distributed system.
